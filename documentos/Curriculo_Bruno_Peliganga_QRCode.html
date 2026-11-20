@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currículo - Bruno Peliganga | Full Stack Web Developer (Com QR Code)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Montserrat:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        :root {
+            --bg-beige: #f4eee7;
+            --bg-dark: #111215;
+            --accent-orange: #ff4800;
+            --accent-orange-light: #ff6a2b;
+            --text-dark: #18191c;
+            --text-muted: #575a61;
+            --text-light: #ffffff;
+            --border-color: #ded6cc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #2b2e35;
+            color: var(--text-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 30px 15px;
+        }
+
+        /* Barra de Ações para Impressão */
+        .action-bar {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 12px;
+            z-index: 1000;
+        }
+
+        .btn-action {
+            background: var(--accent-orange);
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(255, 72, 0, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+
+        .btn-action:hover {
+            background: #e03f00;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(255, 72, 0, 0.6);
+        }
+
+        .btn-action.btn-secondary {
+            background: #111215;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-action.btn-secondary:hover {
+            background: #23252b;
+        }
+
+        /* Folha A4 do CV */
+        .cv-page {
+            width: 210mm;
+            min-height: 297mm;
+            height: 297mm;
+            background-color: var(--bg-beige);
+            display: grid;
+            grid-template-columns: 78mm 132mm;
+            overflow: hidden;
+            border-radius: 18px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+            position: relative;
+        }
+
+        /* ==================== COLUNA ESQUERDA ==================== */
+        .cv-sidebar {
+            background-color: var(--bg-beige);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            border-right: 1.5px solid var(--border-color);
+            z-index: 2;
+        }
+
+        /* Bloco Superior Laranja com Tipografia Brutalista e Foto */
+        .hero-banner {
+            background-color: var(--accent-orange);
+            height: 98mm;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+            border-bottom-right-radius: 40px;
+        }
+
+        /* Tipografia de Fundo (CODE / DEV) */
+        .hero-bg-text {
+            position: absolute;
+            top: 2mm;
+            left: 3mm;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 50pt;
+            line-height: 0.85;
+            color: #0d0e12;
+            letter-spacing: -2px;
+            user-select: none;
+            opacity: 0.95;
+            z-index: 1;
+        }
+
+        .hero-bg-text span {
+            display: block;
+        }
+
+        /* Foto de Perfil Recortada Sobreposta */
+        .hero-photo-wrapper {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 66mm;
+            height: 88mm;
+            z-index: 3;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .hero-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center top;
+            border-bottom-left-radius: 16px;
+            filter: drop-shadow(-6px 6px 14px rgba(0, 0, 0, 0.45));
+            border-left: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Tag Flutuante Estilo Cursor */
+        .floating-tag {
+            position: absolute;
+            bottom: 6mm;
+            left: 5mm;
+            z-index: 4;
+            background: #111215;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 7pt;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .floating-tag i {
+            color: var(--accent-orange);
+            font-size: 10pt;
+        }
+
+        /* Conteúdo Médio da Coluna Esquerda */
+        .sidebar-content {
+            padding: 5.5mm 7mm 3mm 7mm;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .identity-box {
+            margin-bottom: 4.5mm;
+        }
+
+        .identity-box h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 26pt;
+            font-weight: 900;
+            color: var(--text-dark);
+            line-height: 0.95;
+            letter-spacing: -0.5px;
+        }
+
+        .identity-box h1 span {
+            color: var(--accent-orange);
+            display: block;
+        }
+
+        .identity-box .title-role {
+            font-size: 8.5pt;
+            font-weight: 700;
+            color: #4b4e56;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-top: 3mm;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .identity-box .title-role::before {
+            content: "";
+            width: 8px;
+            height: 2.5px;
+            background-color: var(--accent-orange);
+            display: inline-block;
+        }
+
+        /* Habilidades */
+        .skills-block {
+            margin-top: 1.5mm;
+        }
+
+        .skills-heading {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 8.5pt;
+            font-weight: 900;
+            color: var(--accent-orange);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 3mm;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .skills-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 2mm;
+        }
+
+        .skills-list li {
+            font-size: 7.8pt;
+            font-weight: 600;
+            color: #2b2e35;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .skills-list li::before {
+            content: "•";
+            color: var(--accent-orange);
+            font-size: 13pt;
+            line-height: 0;
+        }
+
+        /* Rodapé da Coluna Esquerda: QR Code Interativo e Escaneável */
+        .sidebar-footer-qr {
+            padding: 4mm 7mm 5.5mm 7mm;
+            border-top: 1px dashed var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 2.5mm;
+            background-color: rgba(255, 72, 0, 0.04);
+        }
+
+        .qr-card-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #ffffff;
+            border: 1.5px solid var(--accent-orange);
+            border-radius: 12px;
+            padding: 7px 10px;
+            box-shadow: 0 4px 15px rgba(255, 72, 0, 0.15);
+            text-decoration: none;
+            color: inherit;
+            transition: 0.3s;
+        }
+
+        .qr-card-wrap:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 72, 0, 0.3);
+        }
+
+        .qr-img {
+            width: 17mm;
+            height: 17mm;
+            display: block;
+            border-radius: 6px;
+        }
+
+        .qr-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .qr-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 7.2pt;
+            font-weight: 900;
+            color: var(--accent-orange);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .qr-desc {
+            font-size: 6.5pt;
+            font-weight: 600;
+            color: #3b3e45;
+            line-height: 1.25;
+        }
+
+        .qr-link-text {
+            font-size: 6.2pt;
+            font-weight: 700;
+            color: var(--accent-orange);
+            margin-top: 2px;
+            text-decoration: underline;
+        }
+
+        .slogan-tagline {
+            font-size: 6.2pt;
+            font-weight: 800;
+            color: #636874;
+            letter-spacing: 1.8px;
+            text-transform: uppercase;
+        }
+
+        /* ==================== COLUNA DIREITA ==================== */
+        .cv-main {
+            display: flex;
+            flex-direction: column;
+            background-color: var(--bg-beige);
+        }
+
+        /* Cabeçalho Superior Preto com Contactos Oficiais do Bruno */
+        .main-header {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            padding: 5.5mm 8.5mm;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3mm 6mm;
+            border-bottom-left-radius: 28px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 7.2pt;
+            font-weight: 500;
+            color: #d1d5db;
+        }
+
+        .contact-item i {
+            color: var(--accent-orange);
+            font-size: 9.5pt;
+        }
+
+        .contact-item a {
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .contact-item a:hover {
+            color: var(--accent-orange);
+        }
+
+        /* Corpo Principal da Coluna Direita */
+        .main-body {
+            padding: 6.5mm 8.5mm 4.5mm 8.5mm;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        /* Seção Genérica */
+        .section-block {
+            margin-bottom: 4.5mm;
+            position: relative;
+        }
+
+        .section-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 9.2pt;
+            font-weight: 900;
+            color: var(--text-dark);
+            text-transform: uppercase;
+            letter-spacing: 1.4px;
+            margin-bottom: 2.8mm;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .section-title::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background-color: var(--border-color);
+        }
+
+        /* Objetivo */
+        .objective-text {
+            font-size: 7.9pt;
+            line-height: 1.5;
+            color: #3e424b;
+            font-weight: 500;
+        }
+
+        .objective-text strong {
+            color: var(--accent-orange);
+            font-weight: 700;
+        }
+
+        /* Ícone Estrela / Sunburst no canto */
+        .sunburst-decoration {
+            position: absolute;
+            top: 22mm;
+            right: 8mm;
+            width: 13mm;
+            height: 13mm;
+            color: var(--accent-orange);
+            opacity: 0.9;
+            pointer-events: none;
+        }
+
+        /* Itens de Experiência e Formação */
+        .timeline-item {
+            display: flex;
+            gap: 9px;
+            margin-bottom: 3.8mm;
+            position: relative;
+        }
+
+        .timeline-badge {
+            background-color: var(--accent-orange);
+            color: #fff;
+            font-size: 7.2pt;
+            font-weight: 800;
+            padding: 2.5px 6px;
+            border-radius: 4px;
+            height: fit-content;
+            line-height: 1;
+        }
+
+        .timeline-content {
+            flex: 1;
+        }
+
+        .timeline-date {
+            font-size: 7.2pt;
+            font-weight: 700;
+            color: #6c727e;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 1.5px;
+        }
+
+        .timeline-company {
+            font-size: 8.8pt;
+            font-weight: 800;
+            color: var(--text-dark);
+            line-height: 1.25;
+        }
+
+        .timeline-role {
+            font-size: 7.8pt;
+            font-weight: 700;
+            color: var(--accent-orange);
+            margin-bottom: 1.8mm;
+        }
+
+        .timeline-desc {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5mm;
+        }
+
+        .timeline-desc li {
+            font-size: 7.3pt;
+            color: #4b4f59;
+            line-height: 1.42;
+            position: relative;
+            padding-left: 9px;
+        }
+
+        .timeline-desc li::before {
+            content: "▪";
+            color: var(--accent-orange);
+            position: absolute;
+            left: 0;
+            top: -1px;
+            font-size: 6.5pt;
+        }
+
+        .timeline-desc strong {
+            color: var(--text-dark);
+            font-weight: 700;
+        }
+
+        /* Rodapé Inferior Preto: Idiomas, Cursos Comprovados & Certificações */
+        .main-footer {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            padding: 5.5mm 8.5mm 6.5mm 8.5mm;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4mm 7mm;
+            position: relative;
+            border-top-left-radius: 28px;
+        }
+
+        .footer-col-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 7.8pt;
+            font-weight: 900;
+            color: var(--accent-orange);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-bottom: 2.2mm;
+        }
+
+        .lang-group {
+            margin-bottom: 2mm;
+        }
+
+        .lang-name {
+            font-size: 7.8pt;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .lang-level {
+            font-size: 6.6pt;
+            font-weight: 800;
+            color: var(--accent-orange-light);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .footer-signature {
+            font-family: 'Caveat', cursive;
+            font-size: 24pt;
+            color: var(--accent-orange);
+            line-height: 1;
+            margin-top: 1.5mm;
+            transform: rotate(-4deg);
+            display: inline-block;
+        }
+
+        .footer-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 2.2mm;
+        }
+
+        .footer-item-title {
+            font-size: 7.6pt;
+            font-weight: 700;
+            color: #f3f4f6;
+            line-height: 1.2;
+        }
+
+        .footer-item-sub {
+            font-size: 6.8pt;
+            color: #9ca3af;
+            margin-top: 1px;
+        }
+
+        .footer-cert-code {
+            font-size: 6.2pt;
+            color: var(--accent-orange-light);
+            font-family: monospace;
+            margin-top: 1px;
+        }
+
+        /* ==================== REGRAS DE IMPRESSÃO (PDF A4) ==================== */
+        @media print {
+            body {
+                background: none !important;
+                padding: 0 !important;
+                min-height: auto !important;
+            }
+
+            .action-bar {
+                display: none !important;
+            }
+
+            .cv-page {
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                width: 210mm !important;
+                height: 297mm !important;
+                min-height: 297mm !important;
+                max-height: 297mm !important;
+                page-break-after: avoid !important;
+                page-break-inside: avoid !important;
+            }
+
+            @page {
+                size: A4 portrait;
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Barra de Ações Flutuante (Não sai na impressão) -->
+    <div class="action-bar">
+        <button class="btn-action" onclick="window.print()">
+            <i class='bx bxs-file-pdf'></i> Descarregar / Guardar em PDF (A4)
+        </button>
+        
+        <a href="../index.html" class="btn-action btn-secondary" target="_blank" title="Ver Portfólio">
+            <i class='bx bx-globe'></i> Ver Portfólio
+        </a>
+    </div>
+
+    <!-- FOLHA A4 DO CURRÍCULO -->
+    <div class="cv-page">
+
+        <!-- ==================== COLUNA ESQUERDA ==================== -->
+        <aside class="cv-sidebar">
+            
+            <!-- Banner Superior Laranja com Letras e Foto Peliganga.jpg -->
+            <div class="hero-banner">
+                <div class="hero-bg-text">
+                    <span>CO</span>
+                    <span>DE</span>
+                    <span>DEV</span>
+                </div>
+
+                <div class="hero-photo-wrapper">
+                    <!-- Foto Centrada e Enquadrada Peliganga.jpg -->
+                    <img src="../images/Peliganga.jpg" onerror="this.src='../images/Peliganga.jpg'" alt="Bruno Peliganga - Web Developer" class="hero-photo">
+                </div>
+
+                <div class="floating-tag">
+                    <i class='bx bx-code-curly'></i> Full Stack
+                </div>
+            </div>
+
+            <!-- Dados de Identificação e Competências -->
+            <div class="sidebar-content">
+                <div class="identity-box">
+                    <h1>Bruno<span>Peliganga</span></h1>
+                    <div class="title-role">Web Developer</div>
+                </div>
+
+                <div class="skills-block">
+                    <div class="skills-heading">Habilidades Técnicas</div>
+                    <ul class="skills-list">
+                        <li>HTML5 Semântico & CSS3 Moderno</li>
+                        <li>JavaScript Moderno (ES6+ & POO)</li>
+                        <li>Manipulação DOM, AJAX & Fetch JSON</li>
+                        <li>PHP Estruturado & Orientado a Objetos</li>
+                        <li>Bases de Dados Relacionais MySQL & SQL</li>
+                        <li>Design Responsivo (Flexbox & CSS Grid)</li>
+                        <li>Desenvolvimento & Consumo de APIs REST</li>
+                        <li>Controlo de Versões com Git & GitHub</li>
+                        <li>Bootstrap 5 & Bibliotecas de UI</li>
+                        <li>Otimização de Performance & SEO Web</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Rodapé da Coluna Esquerda: QR Code Interativo e Escaneável -->
+            <div class="sidebar-footer-qr">
+                <a href="https://brunopeliganga.github.io/portfolio/" target="_blank" class="qr-card-wrap" title="Clique ou aponte a câmara do telemóvel para abrir o Portfólio">
+                    <img src="../images/qrcode_portfolio.svg" onerror="this.src='../images/qrcode_portfolio.svg'" alt="QR Code Portfólio Bruno Peliganga" class="qr-img">
+                    <div class="qr-info">
+                        <div class="qr-title"><i class='bx bx-scan'></i> Scan / Clique</div>
+                        <div class="qr-desc">Aceda ao meu Portfólio Online interativo</div>
+                        <div class="qr-link-text">brunopeliganga.github.io</div>
+                    </div>
+                </a>
+                <div class="slogan-tagline">INOVAÇÃO & ENGENHARIA DE SOFTWARE.</div>
+            </div>
+
+        </aside>
+
+        <!-- ==================== COLUNA DIREITA ==================== -->
+        <main class="cv-main">
+
+            <!-- Cabeçalho Preto com Contactos Oficiais do Bruno -->
+            <header class="main-header">
+                <div class="contact-item">
+                    <i class='bx bx-envelope'></i>
+                    <a href="mailto:brunopeliganga315@gmail.com">brunopeliganga315@gmail.com</a>
+                </div>
+                <div class="contact-item">
+                    <i class='bx bxl-linkedin-square'></i>
+                    <a href="https://www.linkedin.com/in/bruno-peliganga-ba585a2a6/" target="_blank">linkedin.com/in/bruno-peliganga</a>
+                </div>
+                <div class="contact-item">
+                    <i class='bx bxl-github'></i>
+                    <a href="https://github.com/BrunoPeliganga" target="_blank">github.com/BrunoPeliganga</a>
+                </div>
+                <div class="contact-item">
+                    <i class='bx bx-map-pin'></i>
+                    <span>2580-400 Lisboa, Portugal</span>
+                </div>
+                <div class="contact-item">
+                    <i class='bx bx-globe'></i>
+                    <a href="https://brunopeliganga.github.io/portfolio/" target="_blank">brunopeliganga.github.io</a>
+                </div>
+            </header>
+
+            <!-- Conteúdo Central: Objetivo, Experiências Comprovadas e Formação -->
+            <div class="main-body">
+
+                <!-- Ícone Geométrico Sunburst Decorativo -->
+                <svg class="sunburst-decoration" viewBox="0 0 100 100" fill="currentColor">
+                    <path d="M50 0 L53 35 L85 15 L65 47 L100 50 L65 53 L85 85 L53 65 L50 100 L47 65 L15 85 L35 53 L0 50 L35 47 L15 15 L47 35 Z"/>
+                </svg>
+
+                <!-- Objetivo Profissional -->
+                <section class="section-block">
+                    <div class="section-title">Objetivo</div>
+                    <p class="objective-text">
+                        Desenvolver e manter portais web modernos, escaláveis e integrados a sistemas de gestão, unindo <strong>front-end dinâmico</strong> e <strong>back-end robusto</strong> (HTML, CSS, JavaScript, PHP e MySQL). Focado em código limpo, rigor técnico, resolução eficiente de problemas e trabalho em equipa com elevado padrão de competência.
+                    </p>
+                </section>
+
+                <!-- Experiências Profissionais & Projetos -->
+                <section class="section-block">
+                    <div class="section-title">Experiências & Estágios Práticos</div>
+
+                    <!-- Experiência 01: Estágio Formativo Comprovado (Com Carta de Recomendação) -->
+                    <div class="timeline-item">
+                        <div class="timeline-badge">01</div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">03/2023 - 04/2023 • Luanda, Angola</div>
+                            <div class="timeline-company">MT - Tecnologia (SU) Lda / Mundo da Tecnologia</div>
+                            <div class="timeline-role">Estágio Formativo em Programação & Bases de Dados (Acreditado INEFOP)</div>
+                            <ul class="timeline-desc">
+                                <li><strong>Modelação & Gestão de Dados:</strong> Estruturação de bases de dados relacionais e execução de queries SQL para gestão e persistência de dados.</li>
+                                <li><strong>Lógica de Programação:</strong> Desenvolvimento de rotinas estruturadas, tratamento de dados e resolução de problemas algorítmicos.</li>
+                                <li><strong>Desempenho de Excelência (90%):</strong> Estágio concluído com avaliação de 90% e <strong>Carta de Recomendação Oficial</strong> emitida pela Direção Geral reconhecendo honestidade, competência técnica e elevado valor profissional.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Experiência 02: Desenvolvimento Web Full Stack & Portais -->
+                    <div class="timeline-item">
+                        <div class="timeline-badge">02</div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">2025 - Presente • Lisboa, Portugal</div>
+                            <div class="timeline-company">Desenvolvimento Web Full Stack & Soluções Digitais</div>
+                            <div class="timeline-role">Web Developer Independente / Formando Master.D</div>
+                            <ul class="timeline-desc">
+                                <li><strong>Desenvolvimento de Portais Web:</strong> Construção de portais responsivos e performantes com HTML5 semântico, CSS3 avançado (Grid/Flexbox) e JavaScript moderno.</li>
+                                <li><strong>Back-End em PHP & Conexão MySQL:</strong> Desenvolvimento de scripts orientados a objetos, tratamento seguro de formulários e integração contínua a bases de dados relacionais.</li>
+                                <li><strong>Integração Assíncrona & APIs:</strong> Consumo de endpoints REST via AJAX/Fetch API com tratamento de dados em JSON e manipulação dinâmica da árvore DOM.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Formação Académica -->
+                <section class="section-block">
+                    <div class="section-title">Formação Académica</div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-badge">01</div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">2025 - 2026 (Em curso) • Lisboa, Portugal</div>
+                            <div class="timeline-company">Master.D — Instituto de Formação Profissional</div>
+                            <div class="timeline-role">Curso Profissional de Desenvolvimento Web Full Stack (12 Meses)</div>
+                            <ul class="timeline-desc">
+                                <li>Especialização em arquitetura web completa: Front-End (HTML5, CSS3, JavaScript), Back-End (PHP), Bases de Dados (MySQL) e Módulo de Desenvolvimento Pessoal e Profissional (MDPP).</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- Rodapé Preto: Idiomas, Cursos Comprovados & Certificações -->
+            <footer class="main-footer">
+                <!-- Coluna 1: Idiomas e Assinatura -->
+                <div>
+                    <div class="footer-col-title">Idiomas</div>
+                    <div class="lang-group">
+                        <div class="lang-name">Português</div>
+                        <div class="lang-level">Nativo / Fluente</div>
+                    </div>
+                    <div class="lang-group">
+                        <div class="lang-name">Inglês</div>
+                        <div class="lang-level">Técnico / Profissional</div>
+                    </div>
+                    
+                    <div style="margin-top: 2.5mm;">
+                        <span class="footer-signature">Bruno Peliganga</span>
+                    </div>
+                </div>
+
+                <!-- Coluna 2: Cursos e Certificações Registadas -->
+                <div>
+                    <div class="footer-col-title">Certificações & Cursos Técnicos</div>
+                    <ul class="footer-list">
+                        <li>
+                            <div class="footer-item-title">Certificação JavaScript Completo (14h)</div>
+                            <div class="footer-item-sub">Danki Code • Concluído em 23/01/2026</div>
+                            <div class="footer-cert-code">Hash: b1414cd2-c5ac-4ec3-83fa-f218916f82ec</div>
+                        </li>
+                        <li>
+                            <div class="footer-item-title">Programação Web + Base de Dados + PHP</div>
+                            <div class="footer-item-sub">CFITEL / ITEL (Inst. Telecomunicações) • 2022</div>
+                        </li>
+                        <li>
+                            <div class="footer-item-title">Bootcamp Arena do Conhecimento (12h)</div>
+                            <div class="footer-item-sub">SIDON Tecnologia & FACUL • 2023</div>
+                        </li>
+                    </ul>
+                </div>
+            </footer>
+
+        </main>
+
+    </div>
+
+    <script>
+        if (window.location.search.includes('pdf') || window.location.search.includes('print')) {
+            window.addEventListener('load', () => setTimeout(() => window.print(), 350));
+        }
+    </script>
+</body>
+</html>
